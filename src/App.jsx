@@ -4,7 +4,7 @@ import './App.css';
 function Game() {
 
   useEffect(() => {
-    document.title = "My Game";
+    document.title = "Normal Game";
   }, []);
 
   const canvasRef = useRef(null);
