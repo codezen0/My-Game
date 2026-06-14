@@ -215,12 +215,11 @@ useEffect(() => {
 
       </div>
 
-      <div className="App">
-      <Game />
+     
       <footer style={{ textAlign: "center", marginTop: "20px" }}>
         © 2026 Made by Zenand Sala
       </footer>
-    </div>
+    
 
     </div>
 
