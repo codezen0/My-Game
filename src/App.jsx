@@ -5,6 +5,35 @@ function Game() {
   const [running, setRunning] = useState(false);
   const [score, setScore] = useState(0);
 
+  //image
+  const screamerImage = new Image();
+  screamerImage.src = "screamer-girl.jpg";
+
+  //timer 
+  const [timeLeft, setTimeLeft] = useState(60);
+const timeLeftRef = useRef(timeLeft);
+useEffect(() => {
+  timeLeftRef.current = timeLeft;
+}, [timeLeft]);
+  useEffect(() => {
+    if (!running) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setRunning(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [running]);
+
+
+
+
   // Player properties
   const playerRef = useRef({ x: 50, y: 150, width: 30, height: 30, speed: 5 });
   const keysRef = useRef({ up: false, down: false });
@@ -92,6 +121,11 @@ function Game() {
         }
       });
 
+      ctx.fillStyle = "white";
+      ctx.font = "30px Arial";
+      ctx.textAlign = "right";
+      ctx.fillText("Time Left: " + timeLeftRef.current, canvas.width - 10, 30);
+
       if (running) {
         animationFrameId = requestAnimationFrame(gameLoop);
       }
@@ -129,16 +163,36 @@ function Game() {
   }, []);
 
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <h1>Score: {score}</h1>
+    
       <canvas ref={canvasRef} width={500} height={300} style={{ border: "1px solid black" }} />
+
+      {timeLeft <= 0 && (
+        <img 
+          src={screamerImage.src} 
+          alt="Jumpscare"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: 9999,
+            objectFit: "cover"
+          }}
+        />
+      )}
+
       <div>
-        <button onClick={() => { setScore(0); enemiesRef.current = []; playerRef.current.y = 150; setRunning(true); }}>Start</button>
+        <button onClick={() => { setScore(0); setTimeLeft(60); enemiesRef.current = []; playerRef.current.y = 150; setRunning(true); }}>Start</button>
         <button onClick={() => setRunning(false)}>Pause</button>
 
         <button onClick={() => {
           setRunning(false);
           setScore(0);
+          setTimeLeft(60);
+          timeLeftRef.current = 60; 
           enemiesRef.current = [];
           playerRef.current.y = 150;
           const canvas = canvasRef.current;
